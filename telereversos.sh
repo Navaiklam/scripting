@@ -54,19 +54,28 @@ while IFS= read -r linea; do
     ips=$(echo "$linea")
     for ip in $ips; do
         
-        if iptables-save | grep -q "$ip"; then
+        if iptables-save | grep -q "OUTPUT.*$ip"; then
             echo -e "${rojo}La IP $ip ya está agregada en iptables${reset}"
         else
-        #iptables -A OUTPUT -s 192.168.88.226 -d $ip.0/24 -j DROP
-            iptables -A OUTPUT -s 192.168.88.218 -d $ip.0/24 -j DROP
+            iptables -A OUTPUT -s 192.168.88.218 -d $ip.0/24 -j DROP            
+            iptables -A OUTPUT -s 192.168.88.226 -d $ip.0/24 -j DROP
             echo -e "${verde}Se agrego el siguiente rango${reset} ${azul}$ip.0/24${reset}"
-            
-            
+        fi
+
+        if iptables-save | grep -q "INPUT.*$ip"; then
+            echo -e "${rojo}La IP $ip ya está agregada en iptables${reset}"
+        else
+            iptables -A INPUT -s $ip.0/24 -d 192.168.88.218 -j DROP
+            iptables -A INPUT -s $ip.0/24 -d 192.168.88.226 -j DROP
+            echo -e "${verde}Se agrego el siguiente rango${reset} ${azul}$ip.0/24${reset}"
         fi
     done
 done < "$archivo_nuevo"
 echo -e "\n ${azul}Así quedo la tabla OUTPUT de iptables${reset}"
 iptables -L OUTPUT --line-numbers
+
+echo -e "\n ${azul}Así quedo la tabla INPUT de iptables${reset}"
+iptables -L INPUT --line-numbers
 echo -e "\n"
 }
 
