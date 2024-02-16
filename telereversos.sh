@@ -1,4 +1,5 @@
 #!/bin/bash
+
 rojo='\033[0;31m'
 verde='\033[0;32m'
 azul='\033[0;34m'
@@ -7,7 +8,7 @@ reset='\033[0m'
 archivo="archivo.txt"
 archivo_nuevo="archivo_nuevo.txt"
 
-sudo timeout 1m tcpdump 2>&1 | grep telecentro-reversos.com.ar > archivo.txt
+timeout 1m tcpdump 2>&1 | grep telecentro-reversos.com.ar > archivo.txt
 
 
 limpiar_ip() {
